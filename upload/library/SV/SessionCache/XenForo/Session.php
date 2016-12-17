@@ -13,7 +13,26 @@ class SV_SessionCache_XenForo_Session extends XFCP_SV_SessionCache_XenForo_Sessi
         $config = XenForo_Application::getConfig();
         if ($config && $config->sessionCache)
         {
-            $this->sessionCache = XenForo_Application::getInstance()->loadCache($config->sessionCache);
+            // setup some defaults
+            $defaultConfig = new Zend_Config(array(
+                'sessionCache' => array(
+                    'enabled' => false,
+                    'frontend' => 'core',
+                    'frontendOptions' => array(
+                        'caching' => true,
+                        'cache_id_prefix' => 'xf_'
+                    ),
+                    'backend' => 'file',
+                    'backendOptions' => array(
+                        'file_name_prefix' => 'xf_'
+                    )
+                )));            
+			$outputConfig = new Zend_Config(array(), true);
+			$outputConfig->merge($defaultConfig)
+			             ->merge($config)
+			             ->setReadOnly();
+
+            $this->sessionCache = XenForo_Application::getInstance()->loadCache($outputConfig->sessionCache);
         }
         else if ($this->_cache)
         {
