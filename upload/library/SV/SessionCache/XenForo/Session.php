@@ -4,7 +4,7 @@ class SV_SessionCache_XenForo_Session extends XFCP_SV_SessionCache_XenForo_Sessi
 {
     protected $sessionCache = null;
 
-    protected function getSessionCache()
+    public function getSessionCache($ignoreEnabled = false)
     {
         if ($this->sessionCache !== null)
         {
@@ -29,19 +29,17 @@ class SV_SessionCache_XenForo_Session extends XFCP_SV_SessionCache_XenForo_Sessi
                 )));            
 			$outputConfig = new Zend_Config(array(), true);
 			$outputConfig->merge($defaultConfig)
-			             ->merge($config)
-			             ->setReadOnly();
-
+			             ->merge($config);
+            if ($ignoreEnabled && !$outputConfig->sessionCache->enabled)
+            {
+                $outputConfig->sessionCache->enabled = true;
+            }
             $this->sessionCache = XenForo_Application::getInstance()->loadCache($outputConfig->sessionCache);
         }
-        else if ($this->_cache)
-        {
-            $this->sessionCache = $this->_cache;
-        }
 
-        if ($this->sessionCache === null)
+        if (!$this->sessionCache)
         {
-            $this->sessionCache = false;
+            $this->sessionCache = $this->_cache ? $this->_cache : false;
         }
         return $this->sessionCache;
     }
