@@ -10,7 +10,7 @@ Note;
 
 Provided scripts:
 
-- For copying MySQL sessions to a seperate cache: copy_mysql_sessions_to_cache.php
+- For copying MySQL sessions to a seperate cache: copy_sessions_to_cache.php
  - Edit the line:
   ```
   $fileDir = dirname(__FILE__) . '/html';
